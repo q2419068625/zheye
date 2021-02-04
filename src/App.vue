@@ -1,5 +1,6 @@
 <template>
 <div class="container">
+  <gobal-header :user="user"></gobal-header>
   <column-list :list="list"></column-list>
 </div>
 </template>
@@ -40,16 +41,21 @@ const testData:ColumnProps[] = [
     avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
   }
 ]
-
-
+import GobalHeader, {UserProps} from './components/GobalHeader.vue'
+const testUser: UserProps ={
+  isLogin: true,
+  name: 'lisi'
+}
 export default defineComponent({
   name: 'App',
   components: {
-    ColumnList
+    ColumnList,
+    GobalHeader
   },
   setup() {
     return {
-      list: testData
+      list: testData,
+      user: testUser
     }
   }
 });
