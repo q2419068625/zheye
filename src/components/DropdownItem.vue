@@ -1,7 +1,7 @@
 <template>
     <li 
 			class="dropdown-option"
-			:class="{'is-disabled' : disabled}"
+			:class="{'is-disabled' :disabled}"
 		>
       <slot></slot>
     </li>
@@ -25,8 +25,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.dropdown-option .is-disabled * {
+<style>
+.dropdown-option.is-disabled * {
 	color: #6c757d;
 	pointer-events: none;
 	background-color: transparent;
