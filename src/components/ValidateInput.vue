@@ -4,8 +4,9 @@
           type="text"
           class="form-control"
           :class="{'is-invalid': inputRef.error}"
-          v-model="inputRef.val"
+          :value="inputRef.val"
           @blur="validateEmail"
+          @input="updateValue"
         />
         <span v-if="inputRef.error" class="invalid-feedback">{{ inputRef.message }}</span>
       </div>
@@ -17,15 +18,17 @@ const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 interface RuleProp {
   type: 'required' | 'email';
   message: string;
+
 }
 export type RulesProp = RuleProp[]
 export default defineComponent({
   props: {
-    rules: Array as PropType<RulesProp>
+    rules: Array as PropType<RulesProp>,
+    modelValue:String
   },
-  setup (props) {
+  setup (props, context) {
     const inputRef = reactive({
-      val: '',
+      val: props.modelValue || '',
       error: false,
       message: ''
     })
@@ -50,9 +53,16 @@ export default defineComponent({
       }
     }
 
+    const updateValue = (e: KeyboardEvent) => {
+      const targetValue = (e.target as HTMLInputElement).value
+      inputRef.val = targetValue
+      context.emit('update:modelValue', targetValue)
+    }
+
     return {
       inputRef,
-      validateEmail
+      validateEmail,
+      updateValue
     }
   }
 })
