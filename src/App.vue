@@ -5,35 +5,12 @@
     <form>
       <div class="mb-3">
         <label class="form-label">邮箱地址:</label>
-        <validate-input :rules="emailRules" v-model="emailVal"></validate-input>
+        <validate-input placeholder="请输入邮箱地址" type="text" :rules="emailRules" v-model="emailVal"></validate-input>
       </div>
-      <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">邮箱地址:</label>
-        <input
-          type="email"
-          class="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          v-model="emailRef.val"
-          @blur="validateEmail"
-        />
-        <div id="emailHelp" v-if="emailRef.error" class="form-text">
-          {{ emailRef.message }}
-        </div>
+        <div class="mb-3">
+        <label class="form-label">密码:</label>
+        <validate-input placeholder="请输入密码" type="password"  :rules="passwordRules" v-model="passwordVal"></validate-input>
       </div>
-      <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">密码</label>
-        <input
-          type="password"
-          class="form-control"
-          id="exampleInputPassword1"
-        />
-      </div>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
 </template>
@@ -84,7 +61,6 @@ const testUser: UserProps = {
   isLogin: true,
   name: 'lisi',
 }
-const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 export default defineComponent({
   name: 'App',
   components: {
@@ -97,29 +73,24 @@ export default defineComponent({
       {type: 'required', message: '电子邮箱地址不能为空'},
       {type: 'email', message: '请输入正确的电子邮箱格式'},
     ]
-    const emailVal = ref('dabu')
+    const passwordRules: RulesProp = [
+      {type: 'required', message: '密码不能为空'}
+    ]
+    const emailVal = ref('')
+    const passwordVal = ref('')
     const emailRef = reactive({
       val: '',
       error: false,
       message: ''
     })
-    const validateEmail = () => {
-      if(emailRef.val.trim() === '') {
-        emailRef.error = true;
-        emailRef.message = 'can not be empty'
-      }else if(!emailReg.test(emailRef.val)) {
-        emailRef.error = true;
-        emailRef.message = 'should be valid email'
-      }
-    }
-
     return {
       list: testData,
       user: testUser,
       emailRef,
-      validateEmail,
       emailRules,
-      emailVal
+      emailVal,
+      passwordRules,
+      passwordVal
     }
   },
 })
