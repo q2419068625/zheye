@@ -88,15 +88,15 @@ export default defineComponent({
       {type: 'required', message: '密码不能为空'}
     ]
     const inputRef = ref<any>()
-    const emailVal = ref('123@qq.com')
-    const passwordVal = ref('123')
+    const emailVal = ref('')
+    const passwordVal = ref('')
     const emailRef = reactive({
       val: '',
       error: false,
       message: ''
     })
     const onFormSubmit = (result: boolean) => {
-      console.log(inputRef.value.validateInput());
+      console.log(result);
       
     }
 
