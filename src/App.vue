@@ -2,17 +2,21 @@
   <div class="container">
     <gobal-header :user="user"></gobal-header>
     <!-- <column-list :list="list"></column-list> -->
-    <form>
+    <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">邮箱地址:</label>
         <validate-input placeholder="请输入邮箱地址" type="text" :rules="emailRules" v-model="emailVal"></validate-input>
       </div>
-        <div class="mb-3">
+      <div class="mb-3">
         <label class="form-label">密码:</label>
         <validate-input placeholder="请输入密码" type="password"  :rules="passwordRules" v-model="passwordVal"></validate-input>
       </div>
-    </form>
+      <template #submit>
+        <span class="btn btn-danger">Submit</span>
+      </template>
+    </validate-form>
   </div>
+  
 </template>
 
 <script lang="ts">
@@ -20,6 +24,7 @@ import { defineComponent, reactive, ref } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
+import ValidateForm from './components/ValidateForm.vue'
 const testData: ColumnProps[] = [
   {
     id: 1,
@@ -66,7 +71,8 @@ export default defineComponent({
   components: {
     ColumnList,
     GobalHeader,
-    ValidateInput
+    ValidateInput,
+    ValidateForm
   },
   setup() {
     const emailRules: RulesProp = [
@@ -83,6 +89,11 @@ export default defineComponent({
       error: false,
       message: ''
     })
+    const onFormSubmit = (result: boolean) => {
+      console.log('1234', result);
+      
+    }
+
     return {
       list: testData,
       user: testUser,
@@ -90,7 +101,8 @@ export default defineComponent({
       emailRules,
       emailVal,
       passwordRules,
-      passwordVal
+      passwordVal,
+      onFormSubmit
     }
   },
 })
