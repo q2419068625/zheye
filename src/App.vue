@@ -18,27 +18,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, computed } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
-import ValidateForm from './components/ValidateForm.vue'
-
+import { useStore } from 'vuex'
 import GobalHeader, { UserProps } from './components/GobalHeader.vue'
-const testUser: UserProps = {
-  isLogin: false,
-  name: 'lisi',
-}
 export default defineComponent({
   name: 'App',
   components: {
     GobalHeader,
-    ValidateInput,
-    ValidateForm
   },
+
   setup() {
+    const store = useStore() 
+    const currentUser = computed(() => store.state.user)
     return {
-      user: testUser,
+      user: currentUser,
     }
   },
 })
