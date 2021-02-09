@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <gobal-header :user="user"></gobal-header>
+    <loader v-if="isLoading"></loader>
     <router-view></router-view>
     <footer class="text-center py-4 text-secondary bg-light mt-6">
       <small>
@@ -21,18 +22,22 @@
 import { defineComponent, computed } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useStore } from 'vuex'
-import GobalHeader, { UserProps } from './components/GobalHeader.vue'
+import GobalHeader from './components/GobalHeader.vue'
+import Loader from './components/Loader.vue'
 export default defineComponent({
   name: 'App',
   components: {
     GobalHeader,
+    Loader
   },
 
   setup() {
     const store = useStore() 
     const currentUser = computed(() => store.state.user)
+    const isLoading = computed(() =>store.state.loading)
     return {
       user: currentUser,
+      isLoading
     }
   },
 })
