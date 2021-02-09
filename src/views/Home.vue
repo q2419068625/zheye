@@ -1,5 +1,5 @@
 <template>
-    <div class="home-page">
+    <div class="home-page container-md">
     <section class="py-5 text-center container">
       <div class="row py-lg-5">
         <div class="col-lg-6 col-md-8 mx-auto">
@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
-import ColumnList, { ColumnProps } from '../components/ColumnList.vue'
+import { defineComponent, computed, onMounted } from 'vue'
+import ColumnList from '../components/ColumnList.vue'
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '../store'
 export default defineComponent({
@@ -35,6 +35,10 @@ export default defineComponent({
     const store = useStore<GlobalDataProps>()
     const list = computed(() => store.state.columns)
     const biggerColumnsLen = computed(() => store.getters.biggerColumnsLen)
+
+    onMounted(() => {
+      store.dispatch('fetchColumns')
+    }) 
     return {
       list,
       biggerColumnsLen
@@ -43,6 +47,6 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style >
 
 </style>
