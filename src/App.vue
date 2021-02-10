@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <gobal-header :user="user"></gobal-header>
-    <message type="error" :message="error.message" v-if="error.status"></message>
+
     <loader v-if="isLoading"></loader>
     <router-view></router-view>
     <footer class="text-center py-4 text-secondary bg-light mt-6">
@@ -20,20 +20,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue'
+import { defineComponent, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useStore } from 'vuex'
 import GobalHeader from './components/GobalHeader.vue'
 import Loader from './components/Loader.vue'
-import Message from './components/Message.vue'
+import createMessage from './components/createMessage'
 import { GlobalDataProps } from './store'
 export default defineComponent({
   name: 'App',
   components: {
     GobalHeader,
-    Loader,
-    Message
+    Loader
   },
 
   setup() {
@@ -42,10 +41,17 @@ export default defineComponent({
     const isLoading = computed(() =>store.state.loading)
     const token = computed(() => store.state.token)
     const error = computed(() => store.state.error)
+
     onMounted(() => {
       if(!currentUser.value.isLogin && token.value) {
         axios.defaults.headers.common.Authorization = `Bearer ${ token.value }`
         store.dispatch('fetchCurrentUser')
+      }
+    })
+    watch(() => error.value.status, () => {
+      const {status, message }  = error.value
+      if(status && message) {
+        createMessage(message, 'error')
       }
     })
     return {

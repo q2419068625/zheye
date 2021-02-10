@@ -1,11 +1,8 @@
 <template>
   <div class="create-post-page">
-    <h4>{{ isEditMode ? '编辑文章' : '新建文章' }}</h4>
+    <!-- <h4>{{ isEditMode ? '编辑文章' : '新建文章' }}</h4> -->
     <uploader
       action="/upload"
-      :beforeUpload="uploadCheck"
-      @file-uploaded="handleFileUploaded"
-      :uploaded="uploadedData"
       class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
     >
       <h2>点击上传头图</h2>
@@ -46,7 +43,7 @@
       </div>
       <template #submit>
         <button class="btn btn-primary btn-large">
-          {{ isEditMode ? '更新文章' : '发表文章' }}
+          <!-- {{ isEditMode ? '更新文章' : '发表文章' }} -->
         </button>
       </template>
     </validate-form>
@@ -81,17 +78,17 @@ export default defineComponent({
     ]
     const onFormSubmit = (result: boolean) => {
       if(result) {
-          const { columnId }  = store.state.user
-          if(columnId) {
+          const { column }  = store.state.user
+          if(column) {
             const newPost = {
               id: new Date().getTime(),
               title: titleVal.value,
               content: contentVal.value,
-              columnId,
+              column,
               createdAt: new Date().toLocaleString()
             }
             store.commit('createPost', newPost)
-            router.push({name: 'column', params: {id: columnId}})
+            router.push({name: 'column', params: {id: column}})
           }
 
       }

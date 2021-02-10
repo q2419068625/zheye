@@ -32,6 +32,7 @@ import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
+import createMessage from '../components/createMessage'
 import { useStore } from 'vuex'
 export default defineComponent({
   name: 'Login',
@@ -58,8 +59,10 @@ export default defineComponent({
           password: passwordVal.value
         }
         store.dispatch('loginAndfetch', payload).then(res => {
-          console.log(res);
-          router.push('/')
+          createMessage('登录成功,2秒后跳转首页', 'success')
+          setTimeout(() => {
+            router.push('/')
+          }, 2000)
         }).catch(e => {
           console.log(e);
           
