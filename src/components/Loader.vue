@@ -8,7 +8,7 @@
       <div class="spinner-border text-primary" role="status">
         <span class="sr-only"></span>
       </div>
-      <p  class="text-primary small">{{ text || 'loading'}}</p>
+      <p class="text-primary small">{{ text || 'loading'}}</p>
     </div>
   </div>
 </teleport>

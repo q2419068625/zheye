@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <gobal-header :user="user"></gobal-header>
+    <h1>{{error.message}}</h1>
     <loader v-if="isLoading"></loader>
     <router-view></router-view>
     <footer class="text-center py-4 text-secondary bg-light mt-6">
@@ -19,11 +20,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, onMounted } from 'vue'
+import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useStore } from 'vuex'
 import GobalHeader from './components/GobalHeader.vue'
 import Loader from './components/Loader.vue'
+import { GlobalDataProps } from './store'
 export default defineComponent({
   name: 'App',
   components: {
@@ -32,12 +35,21 @@ export default defineComponent({
   },
 
   setup() {
-    const store = useStore() 
+    const store = useStore<GlobalDataProps>() 
     const currentUser = computed(() => store.state.user)
     const isLoading = computed(() =>store.state.loading)
+    const token = computed(() => store.state.token)
+    const error = computed(() => store.state.error)
+    onMounted(() => {
+      if(!currentUser.value.isLogin && token.value) {
+        axios.defaults.headers.common.Authorization = `Bearer ${ token.value }`
+        store.dispatch('fetchCurrentUser')
+      }
+    })
     return {
       user: currentUser,
-      isLoading
+      isLoading,
+      error
     }
   },
 })

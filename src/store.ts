@@ -1,10 +1,11 @@
 import { createStore, Commit } from 'vuex'
 import axios from 'axios'
-interface UserProps {
+export interface UserProps {
   isLogin: boolean;
-  name?: string;
-  id?: number;
-  columnId?:number;
+  nickName?: string;
+  _id?: string;
+  column?: string;
+  email?: string;
 }
 export interface ImageProps {
   _id?: string;
@@ -29,8 +30,12 @@ export interface PostProps {
   author?: string | UserProps;
   isHTML?: boolean;
 }
-
+export interface GlobalErrorProps {
+  status: boolean;
+  message?:string
+}
 export interface GlobalDataProps {
+  error: GlobalErrorProps;
   columns: ColumnProps[];
   posts: PostProps[];
   user: UserProps;
@@ -52,9 +57,10 @@ const store = createStore<GlobalDataProps>({
   state: {
     columns: [],
     posts: [],
-    user: { isLogin: false, name: 'dabu', columnId: 1},
+    user: { isLogin: false},
     loading: false,
-    token: ''
+    token: localStorage.getItem('token') || '',
+    error: {status: false}
   },
   mutations: {
     // login(state) {
@@ -75,9 +81,19 @@ const store = createStore<GlobalDataProps>({
     setLoding(state, status) {
       state.loading = status
     },
+    setError(state, e: GlobalErrorProps) {
+      state.error = e
+    },
     login(state, rawData) {
-      state.token = rawData.data.token
+      const { token } = rawData.data
+      state.token = token
+      localStorage.setItem('token', token)
+      axios.defaults.headers.common.Authorization = `Bearer ${ token }`
+    },
+    fetchCurrentUser(state, rawData) {
+      state.user = {isLogin: true , ...rawData.data}
     }
+
   },
   actions: {
     fetchColumns({commit}) {
@@ -92,7 +108,15 @@ const store = createStore<GlobalDataProps>({
     },
     login({ commit }, payload) {
       return postAndCommit('/api/user/login', 'login', commit, payload)
-    }
+    },
+    fetchCurrentUser({commit}) {
+      getAndCommit('/api/user/current','fetchCurrentUser', commit)
+    },
+     loginAndfetch({ dispatch }, loginData) {
+      return dispatch('login', loginData).then(() => {
+        return dispatch('fetchCurrentUser')
+      })
+     }
   },
   getters: {
     getColumnById: (state) => (id: string) => {
