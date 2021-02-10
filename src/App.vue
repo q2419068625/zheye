@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <gobal-header :user="user"></gobal-header>
-    <h1>{{error.message}}</h1>
+    <message type="error" :message="error.message" v-if="error.status"></message>
     <loader v-if="isLoading"></loader>
     <router-view></router-view>
     <footer class="text-center py-4 text-secondary bg-light mt-6">
@@ -26,12 +26,14 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useStore } from 'vuex'
 import GobalHeader from './components/GobalHeader.vue'
 import Loader from './components/Loader.vue'
+import Message from './components/Message.vue'
 import { GlobalDataProps } from './store'
 export default defineComponent({
   name: 'App',
   components: {
     GobalHeader,
-    Loader
+    Loader,
+    Message
   },
 
   setup() {
