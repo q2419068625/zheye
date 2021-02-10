@@ -35,25 +35,31 @@ export interface GlobalDataProps {
   posts: PostProps[];
   user: UserProps;
   loading: boolean;
+  token:string;
 }
 
 const getAndCommit = async (url: string , mutationName: string, commit:Commit ) => {
-  
   const { data } =  await axios.get(url)
   commit(mutationName, data)
+}
+const postAndCommit = async (url: string , mutationName: string, commit:Commit, payload:any ) => {
+  const { data } =  await axios.post(url, payload)
+  commit(mutationName, data)
+  return data
 }
 
 const store = createStore<GlobalDataProps>({
   state: {
     columns: [],
     posts: [],
-    user: { isLogin: true, name: 'dabu', columnId: 1},
-    loading: false
+    user: { isLogin: false, name: 'dabu', columnId: 1},
+    loading: false,
+    token: ''
   },
   mutations: {
-    login(state) {
-      state.user = {...state.user, isLogin: true, name: 'dabu', columnId: 1}
-    },
+    // login(state) {
+    //   state.user = {...state.user, isLogin: true, name: 'dabu', columnId: 1}
+    // },
     createPost(state, newPost) {
       state.posts.push(newPost)
     },
@@ -68,6 +74,9 @@ const store = createStore<GlobalDataProps>({
     },
     setLoding(state, status) {
       state.loading = status
+    },
+    login(state, rawData) {
+      state.token = rawData.data.token
     }
   },
   actions: {
@@ -81,6 +90,9 @@ const store = createStore<GlobalDataProps>({
     fetchPosts({ commit }, cid) {
       getAndCommit(`/api/columns/${cid}/posts`,'fetchPosts', commit)
     },
+    login({ commit }, payload) {
+      return postAndCommit('/api/user/login', 'login', commit, payload)
+    }
   },
   getters: {
     getColumnById: (state) => (id: string) => {
