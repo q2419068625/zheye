@@ -1,5 +1,11 @@
 import { createStore, Commit } from 'vuex'
 import axios from 'axios'
+
+export interface ResponseType<P = {}> {
+  code: number;
+  msg: string;
+  data: P
+}
 export interface UserProps {
   isLogin: boolean;
   nickName?: string;
@@ -46,6 +52,7 @@ export interface GlobalDataProps {
 const getAndCommit = async (url: string , mutationName: string, commit:Commit ) => {
   const { data } =  await axios.get(url)
   commit(mutationName, data)
+  return data
 }
 const postAndCommit = async (url: string , mutationName: string, commit:Commit, payload:any ) => {
   const { data } =  await axios.post(url, payload)
@@ -92,31 +99,38 @@ const store = createStore<GlobalDataProps>({
     },
     fetchCurrentUser(state, rawData) {
       state.user = {isLogin: true , ...rawData.data}
+    },
+    logout(state) {
+      state.token = ''
+      localStorage.removeItem('token')
+      delete axios.defaults.headers.common.Authorization
     }
-
   },
   actions: {
     fetchColumns({commit}) {
-      getAndCommit('/api/columns','fetchColumns', commit)
+      return getAndCommit('/api/columns','fetchColumns', commit)
       // const { data } = await axios.get('')
     },
     fetchColumn({ commit }, cid) {
-      getAndCommit(`/api/columns/${cid}`,'fetchColumn', commit)
+      return getAndCommit(`/api/columns/${cid}`,'fetchColumn', commit)
     },
     fetchPosts({ commit }, cid) {
-      getAndCommit(`/api/columns/${cid}/posts`,'fetchPosts', commit)
+      return getAndCommit(`/api/columns/${cid}/posts`,'fetchPosts', commit)
     },
     login({ commit }, payload) {
       return postAndCommit('/api/user/login', 'login', commit, payload)
     },
-    fetchCurrentUser({commit}) {
-      getAndCommit('/api/user/current','fetchCurrentUser', commit)
+    createPost({ commit }, payload) {
+      return postAndCommit('/api/posts', 'login', commit, payload)
     },
-     loginAndfetch({ dispatch }, loginData) {
+    fetchCurrentUser({commit}) {
+      return getAndCommit('/api/user/current','fetchCurrentUser', commit)
+    },
+    loginAndfetch({ dispatch }, loginData) {
       return dispatch('login', loginData).then(() => {
         return dispatch('fetchCurrentUser')
       })
-     }
+    }
   },
   getters: {
     getColumnById: (state) => (id: string) => {
